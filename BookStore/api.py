@@ -30,18 +30,20 @@ def register_user():
             username = data.get('username')
             user = Users.query.filter(Users.username == username).first()
             if not user:
-                return make_response("Username not registered", 401)
+                return jsonify(message="Username not registered", success=False)
             else:
                 token = jwt.encode({'user_id': user.id}, Config.SECRET_KEY)
                 verify = redirect(url_for('book_store.is_verify', token=token, user_id=user.id))
                 if verify:
-                    return make_response("Registration successful", 200)
-                return make_response("Registration unsuccessful", 200)
+                    return jsonify(message="Registration successful",
+                                   success=True,
+                                   data={"user_id": user.id, "username": user.username})
+                return jsonify(message="Registration unsuccessful", success=False)
         else:
-            return make_response("Registration unsuccessful, did not hit POST method", 401)
+            return jsonify(message="Registration unsuccessful, did not hit POST method", success=False)
     except Exception as e:
         logger.exception(e)
-        return make_response(jsonify(message="Request Invalid"), 401)
+        return jsonify(message="Request Invalid")
 
 
 @book_store.route('/login', methods=['POST'])
@@ -57,16 +59,18 @@ def login_user():
 
         user = Users.query.filter(Users.username == username).first()
         if not user or not check_password_hash(user.password, password):
-            return make_response("Bad username or password", 401)
+            return jsonify(message="Bad username or password", success=False)
         else:
             token = jwt.encode({'user_id': user.id}, Config.SECRET_KEY)
             verify = redirect(url_for('book_store.is_verify', token=token, user_id=user.id))
             if verify:
-                return jsonify(token=token, username=username, message="Login Successful")
-            return make_response("Login unsuccessful", 401)
+                return jsonify(message="Login Successful", success=True,
+                               data={"username": username, "token": token})
+            return jsonify(message="Login unsuccessful", success=False)
+
     except Exception as e:
         logger.exception(e)
-        return make_response(jsonify(message="Bad request"), 401)
+        return jsonify(message="Bad request")
 
 
 @book_store.route('/verify/<token>/<user_id>', methods=['GET'])
