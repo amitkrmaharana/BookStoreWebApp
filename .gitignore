@@ -1,10 +1,10 @@
-.env
+BookStore/.env
 .idea/
 __pycache__/
 book_store_errors.log
 main.py
 migrations/
 venv/
-logger.py
-config.py
-serializer.py
+BookStore/logger.py
+BookStore/config.py
+BookStore/serializer.py
