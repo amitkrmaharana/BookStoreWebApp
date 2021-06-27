@@ -11,7 +11,7 @@ book_store = Blueprint('book_store', __name__)
 from BookStore.models import *
 
 
-@book_store.route('/register', methods=['POST', 'GET'])
+@book_store.route('/register', methods=['POST'])
 def register_user():
     """
     This method registers a new user to the database
@@ -88,4 +88,64 @@ def is_verify(token=None, user_id=None):
         return False
     except Exception as e:
         logger.exception(e)
-        return make_response(jsonify("Token not available"), 401)
+        return jsonify(message="Token not available", success=False)
+
+
+@book_store.route('/addbooks', methods=['POST'])
+def add_books():
+    """
+    This method adds the book details to the database. This can only be done by admin
+    :return: adds the book details to the database
+    """
+    try:
+        if request.method == 'POST':
+            book_data = request.json
+            for book in book_data:
+                details = Books(author=book.get('author'), title=book.get('title'),
+                                quantity=book.get('quantity'), price=book.get('price'),
+                                description=book.get('description'))
+                db.session.add(details)
+                db.session.commit()
+            books = Books.query.all()
+            data = json.dumps(Books.serialize_list(books))
+            return jsonify(message="Books added", success=True,
+                           data={"Books Added": data})
+    except Exception as e:
+        logger.exception(e)
+        return jsonify(message='Bad request or books not added')
+
+
+@book_store.route('/get_books', methods=['GET'])
+@book_store.route('/get_books/<int:page>', methods=['GET'])
+def get_books(page=1):
+    """
+    This method queries all the book details in Books database
+    :return: book details in database , per page only 2 data are returned
+    """
+    try:
+        books = Books.query.paginate(page, per_page=Config.BOOKS_PER_PAGE)
+        data = json.dumps(Books.serialize_list(books.items))
+        return jsonify(success=True, data={"Books": data})
+    except Exception as e:
+        logger.exception(e)
+        return jsonify(message="404 Error", success=False)
+
+
+@book_store.route('/search', methods=['POST'])
+def search_books():
+    """
+    This method returns the books with a specific name or author name
+    json contains the value of keyword
+    :return: list of books
+    """
+    try:
+        if request.method == 'POST':
+            name = request.json
+            books = Books.query.filter(
+                (Books.title == name.get('keyword')) | (Books.author == name.get('keyword'))).all()
+            data = json.dumps(Books.serialize_list(books))
+            return jsonify(success=True,
+                           data={"Book": data})
+    except Exception as e:
+        logger.exception(e)
+        return jsonify(message='Bad request method')
