@@ -66,3 +66,8 @@ def test_add_books_to_cart(client):
     response = client.post(url_for('book_store.add_books_to_cart'), json=data, headers={"token": token})
     assert response.status_code == 200
 
+
+def test_place_order(client):
+    token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.VMA9aviYBT1KPxVlaqqbsHDkmbySq3cfIPITTATtR7U'
+    response = client.post(url_for('book_store.place_order'), headers={"token": token})
+    assert response.status_code == 200

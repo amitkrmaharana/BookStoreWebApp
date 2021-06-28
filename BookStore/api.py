@@ -191,8 +191,39 @@ def add_books_to_cart(user_id):
                                data={"Book Title": book.title, "Quantity": data.get('quantity'),
                                      "Price per book": book.price})
             else:
-                return jsonify(message='Book not available', success=False,)
+                return jsonify(message='Book not available', success=False, )
         return jsonify(message='Should be a POST command', success=False)
+    except Exception as e:
+        logger.exception(e)
+        return jsonify(message='Bad request method')
+
+
+@book_store.route('/order', methods=['POST'])
+@verify_token
+def place_order(user_id):
+    """
+    This api uses the cart table to confirm the order
+    :param user_id: logged in user
+    :return: total amount of the order
+    """
+    try:
+        if request.method == 'POST':
+            total_price = 0
+            carts = Cart.query.filter(Cart.user_id == user_id).all()
+            for cart in carts:
+                book = Books.query.filter(Books.id == cart.book_id).first()
+                price = book.price * cart.quantity
+                total_price = total_price + price
+                db.session.delete(cart)
+                orderbook = Orderbook(user_id=user_id, book_id=cart.book_id)
+                db.session.add(orderbook)
+                db.session.commit()
+            order = Order(user_id=user_id, total_amount=total_price)
+            db.session.add(order)
+            db.session.commit()
+            return jsonify(message='Order Placed', success=True,
+                           data={"User id": user_id, "Total amount": total_price})
+        return jsonify(message='Order Unsuccessful', success=False)
     except Exception as e:
         logger.exception(e)
         return jsonify(message='Bad request method')
