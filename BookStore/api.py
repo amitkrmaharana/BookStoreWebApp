@@ -227,3 +227,24 @@ def place_order(user_id):
     except Exception as e:
         logger.exception(e)
         return jsonify(message='Bad request method')
+
+
+@book_store.route('/wishlist', methods=['POST', 'GET'])
+@verify_token
+def add_to_wishlist(user_id):
+    """
+    Adds books to the wishlist of the user which is logged in
+    :param user_id: logged in user
+    :return: books added to wishlist table
+    """
+    try:
+        if request.method == 'POST':
+            data = request.json
+            wishlist = Wishlist(user_id=user_id, book_id=data.get('book_id'))
+            db.session.add(wishlist)
+            db.session.commit()
+            return jsonify(message='Books added to wishlist', success=True, data={"Book id": data.get('book_id')})
+        return jsonify(message='Books not added to wishlist', success=False)
+    except Exception as e:
+        logger.exception(e)
+        return jsonify(message='Bad request method')

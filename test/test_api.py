@@ -58,6 +58,11 @@ def test_add_books_to_the_database(client):
 
 
 def test_add_books_to_cart(client):
+    """
+    This method checks if the books are added to the cart or not
+    :param client: application test client
+    :return: url status code
+    """
     token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.VMA9aviYBT1KPxVlaqqbsHDkmbySq3cfIPITTATtR7U'
     data = {
         "book_id": 2,
@@ -68,6 +73,25 @@ def test_add_books_to_cart(client):
 
 
 def test_place_order(client):
+    """
+    This method tests if the order is placed or not
+    :param client: application test client
+    :return: url status code
+    """
     token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.VMA9aviYBT1KPxVlaqqbsHDkmbySq3cfIPITTATtR7U'
     response = client.post(url_for('book_store.place_order'), headers={"token": token})
+    assert response.status_code == 200
+
+
+def test_add_books_to_wishlist(client):
+    """
+    This method tests if the book is added to the wishlist
+    :param client: application test client
+    :return: url status code
+    """
+    token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.VMA9aviYBT1KPxVlaqqbsHDkmbySq3cfIPITTATtR7U'
+    data = {
+        "book_id": 3
+    }
+    response = client.post(url_for('book_store.add_to_wishlist'), json=data, headers={"token": token})
     assert response.status_code == 200
