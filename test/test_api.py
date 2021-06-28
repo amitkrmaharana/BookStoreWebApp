@@ -106,3 +106,16 @@ def test_confirmation_mail(client):
     token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.VMA9aviYBT1KPxVlaqqbsHDkmbySq3cfIPITTATtR7U'
     response = client.post(url_for('book_store.confirmation_mail'), headers={"token": token})
     assert response.status_code == 200
+
+
+def test_delivery_trigger(client):
+    """
+    This method tests delivery is updated to true
+    :param client: application test client
+    :return: status code
+    """
+    data = {
+        "order_id": 8
+    }
+    response = client.post(url_for('book_store.is_delivered'), json=data)
+    assert response.status_code == 200

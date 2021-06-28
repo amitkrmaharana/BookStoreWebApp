@@ -281,3 +281,38 @@ books ordered is Rs.%d
     except Exception as e:
         logger.exception(e)
         return jsonify(message='Bad request method')
+
+
+@book_store.route('/sort_by_price', methods=['GET'])
+def sort_by_price():
+    """
+    This method sorts the sorts and retrieves the books by increasing order of the price
+    :return: books data
+    """
+    try:
+        books = Books.query.order_by(Books.price)
+        data = json.dumps(Books.serialize_list(books))
+        return jsonify(message="Books sorted", success=True, data={"Books": data})
+    except Exception as e:
+        logger.exception(e)
+        return jsonify(message="Bad request")
+
+
+@book_store.route('/delivery', methods=['POST'])
+def is_delivered():
+    """
+    This method triggers the delivery status of the product ordered
+    :return:
+    """
+    try:
+        if request.method == 'POST':
+            data = request.json
+            order_id = data.get('order_id')
+            order = Order.query.filter(Order.id == order_id).first()
+            order.is_delivered = True
+            db.session.commit()
+            return jsonify(message='Order Delivered', success=True)
+        return jsonify(message='Request should be POST', success=False)
+    except Exception as e:
+        logger.exception(e)
+        return jsonify(message="Bad request")
