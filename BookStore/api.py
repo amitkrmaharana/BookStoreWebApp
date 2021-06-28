@@ -1,4 +1,5 @@
 import json
+from functools import wraps
 
 import jwt
 from flask import Blueprint, request, make_response, url_for, jsonify
@@ -9,6 +10,22 @@ from BookStore.config import Config
 
 book_store = Blueprint('book_store', __name__)
 from BookStore.models import *
+
+
+def verify_token(function):
+    @wraps(function)
+    def wrapper():
+        if 'token' not in request.headers:
+            resp = jsonify({'message': 'Token not provided in the header, Login is Required'})
+            resp.status_code = 400
+            logger.info('Token not provided in the header')
+            return resp
+        else:
+            data_decode = jwt.decode(request.headers.get('token'), Config.SECRET_KEY, algorithms="HS256")
+
+            return function(data_decode.get('user_id'))
+
+    return wrapper
 
 
 @book_store.route('/register', methods=['POST'])
@@ -146,6 +163,36 @@ def search_books():
             data = json.dumps(Books.serialize_list(books))
             return jsonify(success=True,
                            data={"Book": data})
+    except Exception as e:
+        logger.exception(e)
+        return jsonify(message='Bad request method')
+
+
+@book_store.route('/cart', methods=['POST'])
+@verify_token
+def add_books_to_cart(user_id):
+    """
+    This method requires book id to add to the cart one by one
+    json contains book id, quantity
+    :param user_id: payload in the jwt
+    :return:books id
+    """
+    try:
+        if request.method == 'POST':
+            data = request.json
+            book = Books.query.filter(Books.id == data.get('book_id')).first()
+            if book.quantity > 0:
+                cart = Cart(user_id=user_id, book_id=data.get('book_id'),
+                            quantity=data.get('quantity'))
+                db.session.add(cart)
+                book.quantity = book.quantity - data.get('quantity')
+                db.session.commit()
+                return jsonify(message='Books added to the cart', success=True,
+                               data={"Book Title": book.title, "Quantity": data.get('quantity'),
+                                     "Price per book": book.price})
+            else:
+                return jsonify(message='Book not available', success=False,)
+        return jsonify(message='Should be a POST command', success=False)
     except Exception as e:
         logger.exception(e)
         return jsonify(message='Bad request method')

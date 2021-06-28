@@ -57,3 +57,12 @@ def test_add_books_to_the_database(client):
     assert response.status_code == 200
 
 
+def test_add_books_to_cart(client):
+    token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.VMA9aviYBT1KPxVlaqqbsHDkmbySq3cfIPITTATtR7U'
+    data = {
+        "book_id": 2,
+        "quantity": 1
+    }
+    response = client.post(url_for('book_store.add_books_to_cart'), json=data, headers={"token": token})
+    assert response.status_code == 200
+
