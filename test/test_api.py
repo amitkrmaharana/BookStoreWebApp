@@ -95,3 +95,14 @@ def test_add_books_to_wishlist(client):
     }
     response = client.post(url_for('book_store.add_to_wishlist'), json=data, headers={"token": token})
     assert response.status_code == 200
+
+
+def test_confirmation_mail(client):
+    """
+    This method tests sending of mail to the user
+    :param client: application test client
+    :return: status code
+    """
+    token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.VMA9aviYBT1KPxVlaqqbsHDkmbySq3cfIPITTATtR7U'
+    response = client.post(url_for('book_store.confirmation_mail'), headers={"token": token})
+    assert response.status_code == 200

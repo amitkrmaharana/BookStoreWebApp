@@ -15,9 +15,9 @@ class Users(db.Model):
         mobilenum = db.Column(db.String(10), unique=True, nullable=False)
         password = db.Column(db.String(256), nullable=False)
         email = db.Column(db.String(256), unique=True, nullable=False)
-        cart = db.relationship('Cart', backref='cart', lazy=True, uselist=False)
-        wishlist = db.relationship('Wishlist', backref='wishlist', lazy=True, uselist=False)
-        order = db.relationship('Order', backref='order', lazy=True, uselist=False)
+        cart = db.relationship('Cart', backref='cart', lazy=True)
+        wishlist = db.relationship('Wishlist', backref='wishlist', lazy=True)
+        order = db.relationship('Order', backref='order', lazy=True)
     except Exception as e:
         logger.exception(e)
 

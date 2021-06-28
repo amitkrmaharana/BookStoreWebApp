@@ -1,4 +1,6 @@
 import json
+import smtplib
+import ssl
 from functools import wraps
 
 import jwt
@@ -245,6 +247,37 @@ def add_to_wishlist(user_id):
             db.session.commit()
             return jsonify(message='Books added to wishlist', success=True, data={"Book id": data.get('book_id')})
         return jsonify(message='Books not added to wishlist', success=False)
+    except Exception as e:
+        logger.exception(e)
+        return jsonify(message='Bad request method')
+
+
+@book_store.route('/send_mail', methods=['POST', 'GET'])
+@verify_token
+def confirmation_mail(user_id):
+    """
+    This method sends mail to the user upon confirmation of order
+    :param user_id:
+    :return:
+    """
+    try:
+        user = Users.query.filter(Users.id == user_id).first()
+        order = Order.query.filter(Order.user_id == user_id).first()
+        port = 465
+        password = Config.password
+        sender = 'for657development@gmail.com'
+        receiver = user.email
+        message = """
+Subject: Book order details
+Your total amount for the 
+books ordered is Rs.%d
+""" % order.total_amount
+        # Create a secure SSL context
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+            server.login(sender, password)
+            server.sendmail(sender, receiver, message)
+            return jsonify(message='Mail sent to the %s' % user.username, success=True)
     except Exception as e:
         logger.exception(e)
         return jsonify(message='Bad request method')
