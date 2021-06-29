@@ -1,0 +1,361 @@
+
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Buy or Sell Your Books",
+    "version": "1.0.0",
+    "title": "Book Store"
+  },
+  "host": "127.0.0.1:5000",
+  "tags": [
+    {
+      "name": "Book Store",
+      "description": "API for books in the database"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+        "application/json"
+  ],
+  "paths": {
+    "/register" : {
+      "post" : {
+        "tags": [
+          "BookStore"
+        ],
+        "summary": "Register User in Book Store",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User Registration",
+            "schema": {
+              "$ref": ""
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Registered"
+          },
+          "401": {
+            "description": "Failed to Register"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post" : {
+        "tags": [
+          "BookStore"
+        ],
+        "summary": "Login User to Book Store",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User Login",
+            "schema": {
+              "$ref": ""
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Login Successful"
+          },
+          "401": {
+            "description": "Failed to Login"
+          }
+        }
+      }
+    },
+    "/addbooks": {
+      "post" : {
+        "tags": [
+          "BookStore"
+        ],
+        "summary": "Add books to Book Store",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Add Books",
+            "schema": {
+              "$ref": ""
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Books Added"
+          },
+          "401": {
+            "description": "Books not added"
+          }
+        }
+      }
+    },
+    "/get_books": {
+      "get" : {
+        "tags": [
+          "BookStore"
+        ],
+        "summary": "Fetch First Page From Book Store",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Books Retrieved"
+          },
+          "401": {
+            "description": "Books not Retrieved"
+          }
+        }
+      }
+    },
+    "/get_books/{page}": {
+      "parameters": [
+                {
+                    "name": "page",
+                    "in": "path",
+                    "required": true,
+                    "description": "Page number of the book store",
+                    "type":"integer"
+                }
+      ],
+      "get" : {
+        "tags": [
+          "BookStore"
+        ],
+        "summary": "Fetch First Page From Book Store",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Books Retrieved"
+          },
+          "401": {
+            "description": "Books not Retrieved"
+          }
+        }
+      }
+    },
+    "/search": {
+      "post" : {
+        "tags": [
+          "BookStore"
+        ],
+        "summary": "Search Books in Book Store",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": " Search Books",
+            "schema": {
+              "$ref": ""
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Books Searched"
+          },
+          "401": {
+            "description": "Books not found"
+          }
+        }
+      }
+    },
+    "/cart": {
+      "post" : {
+        "tags": [
+          "BookStore"
+        ],
+        "summary": "Add books to cart",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Add Books",
+            "schema": {
+              "$ref": ""
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Books Added"
+          },
+          "401": {
+            "description": "Books not added"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/order": {
+      "post" : {
+        "tags": [
+          "BookStore"
+        ],
+        "summary": "Place order of the books in cart",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Order Placed"
+          },
+          "401": {
+            "description": "Order not Placed"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/wishlist" : {
+      "post" : {
+        "tags": [
+          "BookStore"
+        ],
+        "summary": "Add books to wishlist",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Add Books",
+            "schema": {
+              "$ref": ""
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Books Added"
+          },
+          "401": {
+            "description": "Books not added"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/send_mail": {
+      "post" : {
+        "tags": [
+          "BookStore"
+        ],
+        "summary": "Send confirmation mail  and details of the order",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Mail Sent"
+          },
+          "401": {
+            "description": "Mail not Sent"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/sort_by_price": {
+      "get" : {
+        "tags": [
+          "BookStore"
+        ],
+        "summary": "Sort Books by price and fetch them",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Books Retrieved"
+          },
+          "401": {
+            "description": "Books not Retrieved"
+          }
+        }
+      }
+    },
+    "/delivery": {
+      "put" : {
+        "tags": [
+          "BookStore"
+        ],
+        "summary": "Delivery trigger",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Delivery trigger",
+            "schema": {
+              "$ref": ""
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Triggered"
+          },
+          "401": {
+            "description": "Failed to Trigger"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+        "JWT": {
+            "type": "apiKey",
+            "name": "token",
+            "in": "header"
+        }
+  }
+}

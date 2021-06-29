@@ -27,3 +27,5 @@ six==1.16.0
 SQLAlchemy==1.4.19
 toml==0.10.2
 Werkzeug==2.0.1
+
+basescript~=0.3.6

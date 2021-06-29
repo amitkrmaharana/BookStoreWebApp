@@ -257,8 +257,8 @@ def add_to_wishlist(user_id):
 def confirmation_mail(user_id):
     """
     This method sends mail to the user upon confirmation of order
-    :param user_id:
-    :return:
+    :param user_id: user id of the user logged in
+    :return:sends email
     """
     try:
         user = Users.query.filter(Users.id == user_id).first()
@@ -269,9 +269,11 @@ def confirmation_mail(user_id):
         receiver = user.email
         message = """
 Subject: Book order details
+Order Confirmed
+Order id = %d
 Your total amount for the 
 books ordered is Rs.%d
-""" % order.total_amount
+""" % (order.id, order.total_amount)
         # Create a secure SSL context
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
@@ -298,21 +300,19 @@ def sort_by_price():
         return jsonify(message="Bad request")
 
 
-@book_store.route('/delivery', methods=['POST'])
+@book_store.route('/delivery', methods=['PUT'])
 def is_delivered():
     """
     This method triggers the delivery status of the product ordered
     :return:
     """
     try:
-        if request.method == 'POST':
-            data = request.json
-            order_id = data.get('order_id')
-            order = Order.query.filter(Order.id == order_id).first()
-            order.is_delivered = True
-            db.session.commit()
-            return jsonify(message='Order Delivered', success=True)
-        return jsonify(message='Request should be POST', success=False)
+        data = request.json
+        order_id = data.get('order_id')
+        order = Order.query.filter(Order.id == order_id).first()
+        order.is_delivered = True
+        db.session.commit()
+        return jsonify(message='Order Delivered', success=True, data={"Order id": order.id, "Delivery status": "Delivered"})
     except Exception as e:
         logger.exception(e)
         return jsonify(message="Bad request")
