@@ -143,7 +143,7 @@
         "tags": [
           "BookStore"
         ],
-        "summary": "Fetch First Page From Book Store",
+        "summary": "Fetch Specific Page From Book Store",
         "produces": [
           "application/json"
         ],
@@ -308,6 +308,34 @@
           "BookStore"
         ],
         "summary": "Sort Books by price and fetch them",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Books Retrieved"
+          },
+          "401": {
+            "description": "Books not Retrieved"
+          }
+        }
+      }
+    },
+    "/sort_by_price/{page}": {
+      "parameters": [
+                {
+                    "name": "page",
+                    "in": "path",
+                    "required": true,
+                    "description": "Page number of the book store",
+                    "type":"integer"
+                }
+      ],
+      "get" : {
+        "tags": [
+          "BookStore"
+        ],
+        "summary": "Fetch Specific Page of sorted books",
         "produces": [
           "application/json"
         ],

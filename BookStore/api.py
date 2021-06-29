@@ -286,14 +286,15 @@ books ordered is Rs.%d
 
 
 @book_store.route('/sort_by_price', methods=['GET'])
-def sort_by_price():
+@book_store.route('/sort_by_price/<int:page>', methods=['GET'])
+def sort_by_price(page=1):
     """
     This method sorts the sorts and retrieves the books by increasing order of the price
     :return: books data
     """
     try:
-        books = Books.query.order_by(Books.price)
-        data = json.dumps(Books.serialize_list(books))
+        books = Books.query.paginate(page, per_page=Config.BOOKS_PER_PAGE)
+        data = json.dumps(Books.serialize_list(books.items))
         return jsonify(message="Books sorted", success=True, data={"Books": data})
     except Exception as e:
         logger.exception(e)
