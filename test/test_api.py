@@ -31,32 +31,6 @@ def test_login_user(client):
     assert response.status_code == 200
 
 
-def test_add_books_to_the_database(client):
-    """
-    Tests if the books are added to the database or not
-    :param client: application test client
-    :return: checks status code and returns boolean
-    """
-    data = [
-        {
-            "author": "Ruby",
-            "title": "Market",
-            "quantity": 32,
-            "price": 119,
-            "description": "Shares the experience of the market"
-        },
-        {
-            "author": "Ragini Bose",
-            "title": "A ping",
-            "quantity": 61,
-            "price": 179,
-            "description": "It's all about a ping"
-        }
-    ]
-    response = client.post(url_for('book_store.add_books'), json=data)
-    assert response.status_code == 200
-
-
 def test_add_books_to_cart(client):
     """
     This method checks if the books are added to the cart or not

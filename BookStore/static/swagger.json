@@ -86,12 +86,16 @@
         "tags": [
           "BookStore"
         ],
-        "summary": "Add books to Book Store",
+        "summary": "Uploads a file",
+        "consumes": [
+          "multipart/form-data"
+        ],
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "description": "Add Books",
+            "in": "formData",
+            "name": "upfile",
+            "type": "file",
+            "description": "Upload a file",
             "schema": {
               "$ref": ""
             }

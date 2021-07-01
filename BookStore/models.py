@@ -35,19 +35,23 @@ class Books(db.Model, Serializer):
     """
     try:
         id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-        author = db.Column(db.String(256), nullable=False)
-        title = db.Column(db.String(256), nullable=False)
+        book_id = db.Column(db.Integer, nullable=False)
+        author = db.Column(db.String(1024), nullable=False)
+        title = db.Column(db.String(1024), nullable=False)
+        image = db.Column(db.Text)
         quantity = db.Column(db.Integer, nullable=False)
         price = db.Column(db.Integer, nullable=False)
-        description = db.Column(db.String(256), nullable=False)
+        description = db.Column(db.Text, nullable=False)
         cart = db.relationship('Cart', lazy=True)
         wishlist = db.relationship('Wishlist', lazy=True)
     except Exception as e:
         logger.exception(e)
 
-    def __init__(self, author, title, quantity, price, description):
+    def __init__(self, book_id, author, title, image, quantity, price, description):
+        self.book_id = book_id
         self.author = author
         self.title = title
+        self.image = image
         self.quantity = quantity
         self.price = price
         self.description = description

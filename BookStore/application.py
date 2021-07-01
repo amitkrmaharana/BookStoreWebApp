@@ -1,10 +1,18 @@
+import redis
+from dotenv import load_dotenv
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_swagger_ui import get_swaggerui_blueprint
 
+from os import path, environ
+
+basedir = path.abspath(path.dirname(__file__))
+load_dotenv(path.join(basedir, '.env'))
+
 db = SQLAlchemy()
 migrate = Migrate()
+redis_cache = redis.Redis(host=environ.get('REDIS_HOST'), port=environ.get('REDIS_PORT'), db=environ.get('REDIS_DB'))
 
 
 def create_app():
