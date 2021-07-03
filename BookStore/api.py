@@ -27,7 +27,7 @@ def verify_token(function):
     @wraps(function)
     def wrapper():
         if 'token' not in request.headers:
-            resp = jsonify({'message': 'Token not provided in the header, Login is Required'})
+            resp = jsonify(message='Requires Login', success=False)
             resp.status_code = 400
             logger.info('Token not provided in the header')
             return resp
@@ -117,34 +117,35 @@ def is_verify(token=None, user_id=None):
 
 
 @book_store.route('/addbooks', methods=['POST'])
-def add_books():
+@verify_token
+def add_books(user_id):
     """
     This method adds the book details to the database. This can only be done by admin
     :return: adds the book details to the database
     """
     try:
-        print("Hi")
-        file = request.files['upfile']
-        if not file:
-            return 'Upload a CSV file'
-        print("FILE")
-        stream = codecs.iterdecode(file.stream, 'utf-8')
-        for row in csv.DictReader(stream, dialect=csv.excel):
-            books = Books.query.filter(Books.book_id == row.get('id')).first()
-            if books:
-                books.quantity = books.quantity + int(row.get('quantity'))
-            else:
-                details = Books(book_id=row.get('id'), author=row.get('author'), title=row.get('title'),
-                                image=row.get('image'),
-                                quantity=int(row.get('quantity')), price=row.get('price'),
-                                description=row.get('description'))
-                db.session.add(details)
-            db.session.commit()
-        books = Books.query.all()
-        data = json.loads(json.dumps(Books.serialize_list(books)))
-        return jsonify(message="Books added", success=True,
-                       data={"Books Added": data})
-
+        user = Users.query.filter(Users.id == user_id).first()
+        if user.username == 'admin':
+            file = request.files['upfile']
+            if not file:
+                return jsonify(message='Upload a CSV file', success=False)
+            stream = codecs.iterdecode(file.stream, 'utf-8')
+            for row in csv.DictReader(stream, dialect=csv.excel):
+                books = Books.query.filter(Books.book_id == row.get('id')).first()
+                if books:
+                    books.quantity = books.quantity + int(row.get('quantity'))
+                else:
+                    details = Books(book_id=row.get('id'), author=row.get('author'), title=row.get('title'),
+                                    image=row.get('image'),
+                                    quantity=int(row.get('quantity')), price=row.get('price'),
+                                    description=row.get('description'))
+                    db.session.add(details)
+                db.session.commit()
+            books = Books.query.all()
+            data = json.loads(json.dumps(Books.serialize_list(books)))
+            return jsonify(message="Books added", success=True,
+                           data={"Books Added": data})
+        return jsonify(message='Access Denied', success=False)
     except Exception as e:
         logger.exception(e)
         return jsonify(message='Bad request or books not added', success=False)
@@ -246,6 +247,7 @@ def place_order(user_id):
         order = Order(user_id=user_id, total_amount=total_price)
         db.session.add(order)
         db.session.commit()
+        redirect(url_for('book_store.confirmation_mail', user_id=user_id))
         return jsonify(message='Order Placed', success=True,
                        data={"User id": user_id, "Total amount": total_price})
     except Exception as e:
@@ -272,9 +274,8 @@ def add_to_wishlist(user_id):
         return jsonify(message='Books not added to wishlist', success=False)
 
 
-@book_store.route('/send_mail', methods=['POST', 'GET'])
-@verify_token
-def confirmation_mail(user_id):
+@book_store.route('/send_mail/<int:user_id>', methods=['POST', 'GET'])
+def confirmation_mail(user_id=None):
     """
     This method sends mail to the user upon confirmation of order
     :param user_id: user id of the user logged in

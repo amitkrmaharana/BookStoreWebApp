@@ -26,7 +26,7 @@
     "/register" : {
       "post" : {
         "tags": [
-          "BookStore"
+          "REGISTER"
         ],
         "summary": "Register User in Book Store",
         "parameters": [
@@ -55,7 +55,7 @@
     "/login": {
       "post" : {
         "tags": [
-          "BookStore"
+          "LOGIN"
         ],
         "summary": "Login User to Book Store",
         "parameters": [
@@ -84,7 +84,7 @@
     "/addbooks": {
       "post" : {
         "tags": [
-          "BookStore"
+          "FOR ADMIN(ADD BOOKS)"
         ],
         "summary": "Uploads a file",
         "consumes": [
@@ -95,10 +95,7 @@
             "in": "formData",
             "name": "upfile",
             "type": "file",
-            "description": "Upload a file",
-            "schema": {
-              "$ref": ""
-            }
+            "description": "Upload a file"
           }
         ],
         "produces": [
@@ -111,13 +108,18 @@
           "401": {
             "description": "Books not added"
           }
-        }
+        },
+        "security": [
+            {
+              "JWT": []
+            }
+          ]
       }
     },
     "/get_books": {
       "get" : {
         "tags": [
-          "BookStore"
+          "GET BOOKS"
         ],
         "summary": "Fetch First Page From Book Store",
         "produces": [
@@ -145,7 +147,7 @@
       ],
       "get" : {
         "tags": [
-          "BookStore"
+          "GET BOOKS WITH PAGE NUMBER"
         ],
         "summary": "Fetch Specific Page From Book Store",
         "produces": [
@@ -164,7 +166,7 @@
     "/search": {
       "post" : {
         "tags": [
-          "BookStore"
+          "SEARCH"
         ],
         "summary": "Search Books in Book Store",
         "parameters": [
@@ -193,7 +195,7 @@
     "/cart": {
       "post" : {
         "tags": [
-          "BookStore"
+          "CART"
         ],
         "summary": "Add books to cart",
         "parameters": [
@@ -227,7 +229,7 @@
     "/order": {
       "post" : {
         "tags": [
-          "BookStore"
+          "BUY NOW"
         ],
         "summary": "Place order of the books in cart",
         "produces": [
@@ -251,7 +253,7 @@
     "/wishlist" : {
       "post" : {
         "tags": [
-          "BookStore"
+          "WISHLIST"
         ],
         "summary": "Add books to wishlist",
         "parameters": [
@@ -282,34 +284,10 @@
         ]
       }
     },
-    "/send_mail": {
-      "post" : {
-        "tags": [
-          "BookStore"
-        ],
-        "summary": "Send confirmation mail  and details of the order",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "Mail Sent"
-          },
-          "401": {
-            "description": "Mail not Sent"
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
     "/sort_by_price": {
       "get" : {
         "tags": [
-          "BookStore"
+          "SORT BY PRICE"
         ],
         "summary": "Sort Books by price and fetch them",
         "produces": [
@@ -337,7 +315,7 @@
       ],
       "get" : {
         "tags": [
-          "BookStore"
+          "SORT BY PRICE WITH PAGE NUMBER"
         ],
         "summary": "Fetch Specific Page of sorted books",
         "produces": [
@@ -356,7 +334,7 @@
     "/delivery": {
       "put" : {
         "tags": [
-          "BookStore"
+          "DELIVERY TRIGGER"
         ],
         "summary": "Delivery trigger",
         "parameters": [
