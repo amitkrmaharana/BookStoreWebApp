@@ -6,5 +6,3 @@ main.py
 migrations/
 venv/
 BookStore/logger.py
-BookStore/config.py
-BookStore/serializer.py
