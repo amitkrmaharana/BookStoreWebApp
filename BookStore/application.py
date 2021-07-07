@@ -18,7 +18,7 @@ redis_cache = redis.Redis(host=environ.get('REDIS_HOST'), port=environ.get('REDI
 def create_app():
     """Initialize the core application."""
     app = Flask(__name__, instance_relative_config=False)
-    app.config.from_object('BookStore.config.Config')
+    app.config.from_object('config.Config')
     # app.config['SQLALCHEMY_ECHO'] = False
     # Initialize Plugins
     db.init_app(app)
@@ -37,9 +37,9 @@ def create_app():
 
     with app.app_context():
         # Include our Routes
-        import BookStore.api
+        import api
         # Register Blueprints
         app.register_blueprint(swagger_blueprint, url_prefix=swagger_url)
-        app.register_blueprint(BookStore.api.book_store)
+        app.register_blueprint(api.book_store)
 
     return app

@@ -10,11 +10,11 @@ from flask import Blueprint, request, url_for, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect
 
-from BookStore.application import redis_cache
-from BookStore.config import Config
+from application import redis_cache
+from config import Config
 
 book_store = Blueprint('book_store', __name__)
-from BookStore.models import *
+from models import *
 
 
 def verify_token(function):

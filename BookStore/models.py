@@ -1,7 +1,7 @@
 from datetime import datetime
-from BookStore.application import db
-from BookStore.logger import logger
-from BookStore.serializer import Serializer
+from application import db
+from logger import logger
+from serializer import Serializer
 
 
 class Users(db.Model):
